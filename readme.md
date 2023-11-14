@@ -14,5 +14,5 @@ npm run build
    This will run it with minimal filesystem permissions. It will also serve the static files from the frontend.
 
 ```shell
-deno run --allow-net --allow-read="./todo-frontend","./todos.db" --allow-write="./todos.db" server.ts
+deno run --allow-net --allow-read="./todo-frontend","./todos.db","./todos.db-journal" --allow-write="./todos.db","./todos.db-journal" server.ts
 ```
