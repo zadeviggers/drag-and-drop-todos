@@ -4,6 +4,7 @@ import {
   serveFile,
 } from "https://deno.land/std@0.206.0/http/file_server.ts";
 import { DB } from "https://deno.land/x/sqlite@v3.8/mod.ts";
+import { TodoList } from "./types.ts";
 
 // We're just using SQLite since it's quick an easy
 const db = new DB("todos.db");
@@ -42,20 +43,28 @@ router.get("/api/all", () => {
     "SELECT id, text, is_completed, created_at, list FROM items"
   );
 
-  // Query and then build the response
-  const allLists = db
-    .queryEntries("SELECT slug, name FROM lists")
-    .map(({ slug, name }) => ({
+  // Query and then build the response.
+  // We'll send the lists in the following format:
+  const allLists: Record<string, TodoList> = Object.fromEntries(
+    db.queryEntries("SELECT slug, name FROM lists").map(({ slug, name }) => [
       slug,
-      name,
-      items: allTodoItems
-        // This isn't good at all, but it's clean and easy,
-        // and works fine at this scale
-        .filter((t) => t.list === slug)
-        // Get rid of the extra field that we don't need to send
-        // deno-lint-ignore no-unused-vars
-        .map(({ list, ...rest }) => ({ ...rest })),
-    }));
+      {
+        slug,
+        name,
+        items: allTodoItems
+          // This isn't good at all, but it's clean and easy,
+          // and works fine at this scale
+          .filter((t) => t.list === slug)
+          // Get rid of the extra field that we don't need to send
+          // deno-lint-ignore no-unused-vars
+          .map(({ list, is_completed, ...rest }) => ({
+            // Booleans are stored as ints 0 or 1 in SQLite
+            is_completed: Boolean(is_completed),
+            ...rest,
+          })),
+      },
+    ])
+  );
 
   return json(allLists);
 });
@@ -185,6 +194,7 @@ router
   .get("*", (req) => serveFile(req, "./todo-frontend/dist/index.html"));
 
 // Run the server
-Deno.serve({ port: 80 }, (req) => {
+Deno.serve({ port: 8080 }, (req) => {
+  console.log(req.method + " " + req.url);
   return router.handle(req);
 });
