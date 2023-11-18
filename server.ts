@@ -38,20 +38,14 @@ const router = Router();
 // each list, but we don't, so it's fine.
 router.get("/api/all", () => {
   // Query then convert to array of objects
-  const allTodoItems = db
-    .query("SELECT id, text, is_completed, created_at, list FROM items")
-    .map(([id, text, is_completed, created_at, list]) => ({
-      id,
-      text,
-      is_completed,
-      created_at,
-      list,
-    }));
+  const allTodoItems = db.queryEntries(
+    "SELECT id, text, is_completed, created_at, list FROM items"
+  );
 
   // Query and then build the response
   const allLists = db
-    .query("SELECT slug, name FROM lists")
-    .map(([slug, name]) => ({
+    .queryEntries("SELECT slug, name FROM lists")
+    .map(({ slug, name }) => ({
       slug,
       name,
       items: allTodoItems
@@ -90,8 +84,7 @@ router.post("/api/todos", async (req) => {
       VALUES (?, ?, FALSE, ?);`,
       [list, text, created_at]
     );
-    const lastRowID = db.query("SELECT last_insert_rowid();")[0].toString();
-    return new Response(lastRowID);
+    return new Response(db.lastInsertRowId + "");
   } catch (err) {
     // Don't stringify the error, so that we get a full stacktrace
     console.warn("Error creating item:", err);
@@ -100,22 +93,48 @@ router.post("/api/todos", async (req) => {
 });
 
 // Edit an item
-router.path("/api/todos/:id", async (req) => {
-  const fields = await req.json();
-  // TODO: Figure this out
-  // Create the list
+router.patch("/api/todos/:id", async (req) => {
+  // TODO: Error handling here
+  const suppliedFields = await req.json();
+
+  // Filter supplied fields to be the correct columns and types
+  const allowedToUpdateFields = {
+    list: "string",
+    is_completed: "boolean",
+    text: "string",
+    // This is needed to make TypeScript let us index it with strings
+  } as Record<string, string>;
+
+  const filteredFields = Object.fromEntries(
+    Object.entries(suppliedFields).filter(
+      ([key, value]) =>
+        // Correct column name
+        Object.keys(allowedToUpdateFields).includes(key) &&
+        // Correct
+        typeof value === allowedToUpdateFields[key]
+    )
+  ) as Record<string, string | boolean>;
+
+  // Update the todo
   try {
     db.query(
-      `UPDATE items (is_completed)
-      -- SQLite translates FALSE into 0 and TRUE into 1
-      VALUES (TRUE);`
+      `UPDATE items (${
+        /* This is safe since we've already validated the object keys */
+        Object.keys(filteredFields).join(", ")
+      })
+      -- We still need to use proper sanitisation here though
+      VALUES (${Object.keys(filteredFields)
+        .map((key) => `:${key}`)
+        .join(", ")});`,
+      filteredFields
     );
   } catch (err) {
     // Don't stringify the error, so that we get a full stacktrace
     console.warn("Error completing item:", err);
-    return error(500, "Failed to completing todo item. Please try again.");
+    return error(500, "Failed update todo item. Please try again.");
   }
 
+  // Phyrexia will return!
   return new Response("Completed ⏀");
 });
 
