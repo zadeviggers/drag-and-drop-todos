@@ -6,7 +6,7 @@ import "./styles.css";
 import TodoApp from "./TodoApp.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <TodoApp />
-  </React.StrictMode>
+	<React.StrictMode>
+		<TodoApp />
+	</React.StrictMode>
 );
