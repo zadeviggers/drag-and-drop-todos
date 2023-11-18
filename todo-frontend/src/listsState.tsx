@@ -16,7 +16,7 @@ export function useItems(slug: string | null): TodoItem[] {
 	const { lists } = useContext(allListsContext);
 
 	// Make life easy for consumers
-	if (slug == null) return [];
+	if (slug === null) return [];
 
 	const items = lists?.[slug]?.items;
 
@@ -26,10 +26,39 @@ export function useItems(slug: string | null): TodoItem[] {
 /**
  * Get all the lists
  */
-export function useLists(): TodoList[] {
-	const { lists } = useContext(allListsContext);
+export function useLists() {
+	const { lists, setLists } = useContext(allListsContext);
 
-	return lists === null ? [] : Object.values(lists);
+	async function addList(name: string) {
+		try {
+			const res = await fetch("/api/lists", { method: "POST", body: name });
+			if (res.ok) {
+				const slug = await res.text();
+
+				// Add new list to list
+				setLists((prevLists) => ({
+					...prevLists,
+					[slug]: { name, slug, items: [] },
+				}));
+			}
+		} catch (err) {
+			console.error("Failed to create new list: ", err);
+			alert(`Failed to add list: ${err}`);
+		}
+	}
+
+	function getList(slug: string | null) {
+		// Make life easy for consumers
+		if (slug === null) return null;
+
+		return lists?.[slug] ?? null;
+	}
+
+	return {
+		lists: lists === null ? [] : Object.values(lists),
+		addList,
+		getList,
+	};
 }
 
 /**

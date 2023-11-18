@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { useItems } from "./listsState";
+import { useSlug } from "./slugState";
 
-export function List({ slug }: { slug: string | null }) {
+export function List() {
+	const slug = useSlug();
 	const [showCompleted, setShowCompleted] = useState(false);
 	const items = useItems(slug);
 
