@@ -17,6 +17,9 @@
 	--spacing-1: 25px;
 	--spacing-2: 50px;
 	--bg: whitesmoke;
+	--accent-colour: royalblue;
+	--accent-light: skyblue;
+	--borders: black;
 }
 
 html,
@@ -82,7 +85,7 @@ Sidebar styles
 	padding: var(--spacing-1);
 	padding-left: calc(var(--spacing-1) - var(--current-page-indicator-width));
 	text-decoration: none;
-	color: black;
+	color: var(--borders);
 	/* Keep everything with current page indicator aligned */
 	border-left: var(--current-page-indicator-width) solid transparent;
 	/* Get rid of initial colour from buttons */
@@ -90,11 +93,11 @@ Sidebar styles
 }
 
 .sidebar-link:hover {
-	background-color: lightblue;
+	background-color: var(--accent-light);
 }
 
 [data-selected] .sidebar-link {
-	border-left-color: darkblue;
+	border-left-color: var(--accent-colour);
 }
 
 /* 
@@ -118,9 +121,39 @@ List styles
 }
 
 .todo-item input {
-	display: block;
+	/* Remove default styles */
+	appearance: none;
+
 	margin-right: var(--spacing-1);
-	padding: var(--spacing-1);
+
+	/* Knob */
+	--checkbox-size: 20px;
+
+	/* Custom checkbox */
+	width: var(--checkbox-size);
+	height: var(--checkbox-size);
+	display: block;
+	border-radius: 99999px;
+	border: 1px solid var(--borders);
+	background-color: var(--bg);
+	position: relative;
+}
+
+.todo-item input:checked {
+	background-color: var(--accent-colour);
+}
+
+/* Dot in center to make it clearer */
+.todo-item input:checked::after {
+	content: " ";
+	width: 5px;
+	height: 5px;
+	border-radius: 9999px;
+	background-color: var(--borders);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 .todo-item:has(input:checked) {
