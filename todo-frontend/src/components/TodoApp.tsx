@@ -1,7 +1,7 @@
 import { List } from "./List";
 import { Sidebar } from "./Sidebar";
-import { ItemsContextProvider } from "./listsState";
-import { CurrentListSlugContextProvider } from "./slugState";
+import { ItemsContextProvider } from "../state/listsState";
+import { CurrentListSlugContextProvider } from "../state/slugState";
 
 export default function TodoApp() {
 	return (

@@ -1,5 +1,9 @@
-import { useLists } from "./listsState";
-import { useNavigateToSlug, useSlug, CLIENT_SIDE_ROUTING } from "./slugState";
+import { useLists } from "../state/listsState";
+import {
+	useNavigateToSlug,
+	useSlug,
+	CLIENT_SIDE_ROUTING,
+} from "../state/slugState";
 
 export function Sidebar() {
 	const slug = useSlug();

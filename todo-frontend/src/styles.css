@@ -14,7 +14,7 @@
 :root {
 	--sidebar-width: 250px;
 	--current-page-indicator-width: 10px;
-	--spacing-1: 30px;
+	--spacing-1: 25px;
 	--spacing-2: 50px;
 	--bg: whitesmoke;
 }
@@ -27,10 +27,9 @@ body,
 	background-color: var(--bg);
 }
 
-#list-container {
-	margin-left: var(--sidebar-width);
-	padding: var(--spacing-1);
-}
+/* 
+Sidebar styles
+*/
 
 #sidebar {
 	padding-top: var(--spacing-2);
@@ -96,4 +95,39 @@ body,
 
 [data-selected] .sidebar-link {
 	border-left-color: darkblue;
+}
+
+/* 
+List styles
+*/
+
+#list-container {
+	margin-left: var(--sidebar-width);
+}
+
+#todo-items {
+	display: flex;
+	flex-direction: column;
+	/* width: 100%; */
+}
+
+.todo-item {
+	border-top: 2px solid black;
+	display: flex;
+	padding: var(--spacing-1);
+}
+
+.todo-item input {
+	display: block;
+	margin-right: var(--spacing-1);
+	padding: var(--spacing-1);
+}
+
+.todo-item:has(input:checked) {
+	text-decoration: line-through;
+	color: grey;
+}
+
+.created-at {
+	margin-left: auto;
 }

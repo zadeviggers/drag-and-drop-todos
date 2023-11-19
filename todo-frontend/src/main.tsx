@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 
 import "./styles.css";
 
-import TodoApp from "./TodoApp.tsx";
+import TodoApp from "./components/TodoApp.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
