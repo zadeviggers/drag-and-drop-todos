@@ -83,8 +83,30 @@ export function List() {
 					</div>
 					<ul id="todo-items">
 						{sortedAndFilteredItems.map((item) => (
-							<li key={item.id} className="todo-item-container">
+							<li className="todo-item-container">
 								<label
+									key={item.id}
+									draggable="true"
+									onDragStart={(event) => {
+										// Say it can be moved
+										event.dataTransfer.effectAllowed = "move";
+
+										// For compatibility with other applications
+										event.dataTransfer.setData(
+											"text/plain",
+											`- [${item.is_completed ? "x" : " "}] ${item.text}`
+										);
+
+										// Used by app
+										event.dataTransfer.setData(
+											"application/x-todo-list-from-list-slug",
+											item.list
+										);
+										event.dataTransfer.setData(
+											"application/x-todo-list-item-id",
+											item.id + ""
+										);
+									}}
 									className="todo-item"
 									htmlFor={`item-checkbox-${item.id}`}
 								>

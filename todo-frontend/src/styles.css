@@ -19,6 +19,7 @@
 	--bg: whitesmoke;
 	--accent-colour: royalblue;
 	--accent-light: skyblue;
+	--accent-secondary: lightcoral;
 	--borders: black;
 }
 
@@ -98,6 +99,10 @@ Sidebar styles
 
 [data-selected] .sidebar-link {
 	border-left-color: var(--accent-colour);
+}
+
+[data-drag-over] .sidebar-link {
+	border-left-color: var(--accent-secondary);
 }
 
 /* 

@@ -107,13 +107,55 @@ export function useItems(slug: string | null) {
 export function useLists() {
 	const { lists, setLists } = useContext(allListsContext);
 
+	async function moveItem(
+		itemID: number,
+		fromListSlug: string,
+		toListSlug: string
+	) {
+		const fromList = lists?.[fromListSlug];
+		const toList = lists?.[toListSlug];
+		if (!fromList || !toList) return;
+		const item = fromList.items.find((item) => item.id === itemID);
+		if (!item) return;
+
+		try {
+			const data = {
+				list: toListSlug,
+			};
+
+			const res = await fetch(`/api/items/${itemID}`, {
+				method: "PATCH",
+				body: JSON.stringify(data),
+			});
+
+			if (res.ok) {
+				setLists((prevLists) => {
+					return {
+						...prevLists,
+						[fromList.slug]: {
+							...fromList,
+							items: [...fromList.items.filter((item) => item.id !== itemID)],
+						},
+						[toList.slug]: {
+							...toList,
+							items: [...toList.items, { ...item, list: toListSlug }],
+						},
+					};
+				});
+			}
+		} catch (err) {
+			console.error("Failed to change item list: ", err);
+			alert(`Failed to change item list: ${err}`);
+		}
+	}
+
 	async function addList(name: string) {
 		try {
 			const res = await fetch("/api/lists", { method: "POST", body: name });
 			if (res.ok) {
 				const slug = await res.text();
 
-				// Add new list to list
+				// Add new list to dict
 				setLists((prevLists) => ({
 					...prevLists,
 					[slug]: { name, slug, items: [] },
@@ -136,6 +178,7 @@ export function useLists() {
 		lists: lists === null ? [] : Object.values(lists),
 		addList,
 		getList,
+		moveItem,
 	};
 }
 
