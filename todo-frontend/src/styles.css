@@ -43,6 +43,10 @@ Sidebar styles
 
 	border-right: 3px solid black;
 
+	background-color: var(--bg);
+	/* Show above tickboxes */
+	z-index: 10;
+
 	/* Keep sidebar on the side at all times */
 	left: 0;
 	top: 0;
