@@ -114,9 +114,13 @@ List styles
 	/* width: 100%; */
 }
 
-.todo-item {
+.todo-item-container {
 	border-top: 2px solid black;
+}
+
+.todo-item {
 	display: flex;
+	align-items: center;
 	padding: var(--spacing-1);
 }
 
