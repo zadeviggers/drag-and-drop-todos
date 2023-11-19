@@ -59,52 +59,38 @@ export function useItems(slug: string | null) {
 	}
 
 	async function setCompleted(item: TodoItem, is_completed: boolean) {
+		// I'd love to do optimistic updates, but I don't have time
+		// to sort out the rollback logic
 		try {
+			// Race condition if an item is completed and moved.
+			// Oh well, don't have time.
 			const newItemData: TodoItem = { ...item, is_completed };
-
-			// Optimistic update
-			setLists((prevLists) => {
-				const prevList = prevLists?.[item.list] ?? null;
-				if (prevList === null) return prevLists;
-
-				return {
-					...prevLists,
-					[prevList.slug]: {
-						...prevList,
-						items: [
-							...prevList.items.filter((item) => item.id !== newItemData.id),
-							newItemData,
-						],
-					},
-				};
-			});
 
 			const res = await fetch(`/api/items/${item.id}`, {
 				method: "PATCH",
 				body: JSON.stringify({ is_completed }),
 			});
 
-			if (!res.ok) {
+			if (res.ok) {
+				setLists((prevLists) => {
+					const prevList = prevLists?.[newItemData.list];
+					if (!prevList) return null;
+
+					return {
+						...prevLists,
+						[prevList.slug]: {
+							...prevList,
+							items: [
+								...prevList.items.filter((item) => item.id !== newItemData.id),
+								newItemData,
+							],
+						},
+					};
+				});
+			} else {
 				throw `${res.status} - ${await res.text()}`;
 			}
 		} catch (err) {
-			// Rollback
-			setLists((prevLists) => {
-				const prevList: TodoList | null = prevLists?.[item.list] ?? null;
-				if (prevList === null) return prevLists;
-				const oldItemData: TodoItem = { ...item, is_completed: !is_completed };
-				return {
-					...prevLists,
-					[prevList.slug]: {
-						...prevList,
-						items: [
-							...prevList.items.filter((item) => item.id !== oldItemData.id),
-							oldItemData,
-						],
-					},
-				};
-			});
-
 			console.error("Failed to complete/uncomplete item: ", err);
 			alert(`Failed to complete/uncomplete item: ${err}`);
 		}
@@ -180,7 +166,9 @@ export function ItemsContextProvider({ children }: React.PropsWithChildren) {
 						throw `${res.status} - ${errMessage}`;
 					}
 				})
-				.then((data) => setLists(data))
+				.then((data) => {
+					setLists(data);
+				})
 				.catch((err) => {
 					// Ignore cancellations caused by unmount
 					if ((err + "").includes("abort")) return;
