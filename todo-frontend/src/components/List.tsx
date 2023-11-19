@@ -53,7 +53,7 @@ export function List() {
 		const secondsElapsed = (date.getTime() - updated.getTime()) / 1000;
 
 		for (const [rangeType, rangeVal] of ranges) {
-			if (rangeVal < Math.abs(secondsElapsed)) {
+			if (rangeVal <= Math.abs(secondsElapsed)) {
 				const delta = secondsElapsed / rangeVal;
 				return formatter.format(Math.round(delta), rangeType);
 			}
