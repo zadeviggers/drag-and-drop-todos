@@ -126,6 +126,7 @@ List styles
 .todo-item {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	padding: var(--spacing-1);
 }
 
@@ -168,6 +169,13 @@ List styles
 .todo-item:has(input:checked) {
 	text-decoration: line-through;
 	color: grey;
+}
+
+.item-text {
+	display: block;
+	height: auto;
+	max-width: calc(100vw - 250px - var(--sidebar-width));
+	text-wrap: wrap;
 }
 
 .created-at {

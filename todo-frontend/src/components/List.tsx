@@ -119,7 +119,7 @@ export function List() {
 											setCompleted(item, event.currentTarget.checked)
 										}
 									/>
-									{item.text}
+									<span className="item-text">{item.text}</span>
 									<span className="created-at">
 										Created {timeAgo(item.created_at)}{" "}
 									</span>
