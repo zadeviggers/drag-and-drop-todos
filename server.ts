@@ -43,8 +43,6 @@ router.get("/api/all", () => {
 		"SELECT id, text, is_completed, created_at, list FROM items"
 	);
 
-	console.log(allTodoItems);
-
 	// Query and then build the response.
 	// We'll send the lists in the following format:
 	const allLists: Record<string, TodoList> = Object.fromEntries(

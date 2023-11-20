@@ -67,7 +67,6 @@ function DropZone({
 				setHovered(false);
 			}}
 			onDrop={(event) => {
-				console.log(event);
 				setHovered(false);
 				const listSlug = event.dataTransfer.getData(
 					"application/x-todo-list-list-slug"
@@ -76,7 +75,6 @@ function DropZone({
 					event.dataTransfer.getData("application/x-todo-list-item-id")
 				);
 				if (!listSlug || !itemID || isNaN(itemID)) return;
-				console.log("Got pas first check");
 				const item = getItem(listSlug, itemID);
 				if (!item) return;
 
