@@ -21,6 +21,8 @@ npm run build
 
 > You'll need [Deno](https://docs.deno.com/runtime/manual/getting_started/installation) installed
 
+When you run the server for the first time, the database and tables will all be set up automatically.
+
 ```shell
 cd .. # back to project root
 deno run --allow-net --allow-read="./todo-frontend","./todos.db","./todos.db-journal" --allow-write="./todos.db","./todos.db-journal" server.ts
