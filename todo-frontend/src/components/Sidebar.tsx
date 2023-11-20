@@ -10,7 +10,7 @@ export function Sidebar() {
 	const slug = useSlug();
 	const navigateToSlug = useNavigateToSlug();
 	const { moveItem } = useItems();
-	const { lists, getList, addList } = useLists();
+	const { lists, getList, addList, renameList, deleteList } = useLists();
 	const currentList = getList(slug);
 	const [currentDragOverSlug, setCurrentDragOverSlug] = useState<string | null>(
 		null
@@ -19,6 +19,35 @@ export function Sidebar() {
 	return (
 		<div id="sidebar">
 			<h1 id="title">{currentList?.name ?? "Todos"}</h1>
+			{currentList !== null && slug !== null && (
+				<menu id="sidebar-list-actions">
+					<li className="sidebar-action">
+						<button
+							id="rename-list-button"
+							onClick={() => {
+								const newName = prompt("Rename list", currentList.name);
+								if (!newName) return;
+								renameList(currentList, newName);
+							}}
+						>
+							Rename
+						</button>
+					</li>
+					<li className="sidebar-action">
+						<button
+							id="delete-list-button"
+							onClick={() => {
+								const shouldDelete = confirm(
+									`Are you sure you want to delete '${currentList.name}'?\n\nThis will also delete all TODO items in it.									`
+								);
+								if (shouldDelete) deleteList(slug);
+							}}
+						>
+							Delete
+						</button>
+					</li>
+				</menu>
+			)}
 			<ul id="sidebar-lists" onDragExit={() => setCurrentDragOverSlug(null)}>
 				{lists.map((list) => (
 					<li

@@ -192,7 +192,45 @@ router.post("/api/lists", async (req) => {
 	return new Response(slug);
 });
 
-// TODO: Renaming & deleting lists
+// Edit an item
+router.patch("/api/lists/:slug", async (req) => {
+	const slug = req.params.slug;
+	const newName = await req.text();
+
+	// Update the list
+	try {
+		db.query(`UPDATE lists SET name=:newName WHERE slug=:slug;`, {
+			slug,
+			newName,
+		});
+	} catch (err) {
+		// Don't stringify the error, so that we get a full stacktrace
+		console.warn("Error renaming list:", err);
+		return error(500, "Failed update todo list. Please try again.");
+	}
+
+	return new Response(`Renamed list ${slug} to ${newName}`);
+});
+
+// Edit an item
+router.delete("/api/lists/:slug", (req) => {
+	const slug = req.params.slug;
+
+	try {
+		db.transaction(() => {
+			// First delete the list's items
+			db.query(`DELETE FROM items WHERE list=:slug;`, { slug });
+			// Then delete the list
+			db.query(`DELETE FROM lists WHERE slug=:slug;`, { slug });
+		});
+	} catch (err) {
+		// Don't stringify the error, so that we get a full stacktrace
+		console.warn("Error deleting list:", err);
+		return error(500, "Error deleting list. Please try again.");
+	}
+
+	return new Response(`Deleted list ${slug}`);
+});
 
 // File server stuff
 router

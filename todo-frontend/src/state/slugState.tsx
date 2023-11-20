@@ -51,10 +51,10 @@ export function useSlug() {
  */
 export function useNavigateToSlug() {
 	const { setSlug } = useContext(currentListSlugContext);
-	return (newSlug: string) => {
+	return (newSlug: string | null) => {
 		setSlug(newSlug);
 		const url = new URL(location.href);
-		url.pathname = `/list/${newSlug}`;
+		url.pathname = newSlug === null ? "/" : `/list/${newSlug}`;
 		history.pushState(null, "", url);
 	};
 }

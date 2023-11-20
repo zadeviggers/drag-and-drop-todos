@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { TodoItem, TodoList } from "../../../types.ts";
-import { useSlug } from "./slugState.tsx";
+import { useNavigateToSlug, useSlug } from "./slugState.tsx";
 
 const allListsContext = createContext<{
 	lists: null | Record<string, TodoList>;
@@ -225,6 +225,8 @@ export function useItems() {
  */
 export function useLists() {
 	const { lists, setLists } = useContext(allListsContext);
+	const navigateToSlug = useNavigateToSlug();
+	const currentSlug = useSlug();
 
 	function getList(slug: string | null) {
 		// Make life easy for consumers
@@ -251,10 +253,64 @@ export function useLists() {
 		}
 	}
 
+	async function renameList(list: TodoList, name: string) {
+		try {
+			const res = await fetch(`/api/lists/${list.slug}`, {
+				method: "PATCH",
+				body: name,
+			});
+
+			if (res.ok) {
+				setLists((prevLists) => {
+					const prevList = prevLists?.[list.slug];
+					if (!prevList) return null;
+
+					return {
+						...prevLists,
+						[prevList.slug]: {
+							...prevList,
+							name,
+						},
+					};
+				});
+			} else {
+				throw `${res.status} - ${await res.text()}`;
+			}
+		} catch (err) {
+			console.error("Failed to rename list: ", err);
+			alert(`Failed to rename list: ${err}`);
+		}
+	}
+
+	async function deleteList(listSlug: string) {
+		try {
+			const res = await fetch(`/api/lists/${listSlug}`, { method: "DELETE" });
+			if (res.ok) {
+				setLists((prevLists) => {
+					const newLists = {
+						...prevLists,
+					};
+
+					delete newLists[listSlug];
+
+					return newLists;
+				});
+			}
+			if (currentSlug === listSlug) {
+				navigateToSlug(null);
+			}
+		} catch (err) {
+			console.error("Failed to delete list: ", err);
+			alert(`Failed to delete list: ${err}`);
+		}
+	}
+
 	return {
 		lists: lists === null ? [] : Object.values(lists),
 		addList,
 		getList,
+		renameList,
+		deleteList,
 	};
 }
 
