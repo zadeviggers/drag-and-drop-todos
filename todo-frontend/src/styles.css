@@ -146,6 +146,13 @@ Sidebar styles
 	border-left-color: var(--accent-secondary);
 }
 
+/* List section */
+#no-todos-message {
+	font-weight: bold;
+	font-size: large;
+	padding: var(--spacing-2);
+}
+
 /* List control styles */
 
 #top-section {

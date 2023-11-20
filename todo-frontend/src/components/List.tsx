@@ -65,7 +65,7 @@ export function List() {
 	return (
 		<div id="list-container">
 			{slug === null ? (
-				<p className="big-message-text">Choose a to-do list</p>
+				<p id="no-todos-message">Choose a to-do list on the left</p>
 			) : (
 				<>
 					<div id="top-section">
