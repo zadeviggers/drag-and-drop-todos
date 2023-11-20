@@ -12,7 +12,7 @@
 
 /* Knobs for tweaking */
 :root {
-	--sidebar-width: 250px;
+	--sidebar-width: 260px;
 	--current-page-indicator-width: 10px;
 	--spacing-1: 25px;
 	--spacing-2: 50px;
@@ -131,6 +131,7 @@ Sidebar styles
 	border-left: var(--current-page-indicator-width) solid transparent;
 	/* Get rid of initial colour from buttons */
 	background-color: var(--bg);
+	transition-duration: var(--transition-speed);
 }
 
 .sidebar-link:hover {
@@ -177,6 +178,7 @@ Sidebar styles
 	border-radius: var(--roundness);
 	background-color: var(--bg);
 	border: var(--border-width) solid var(--borders);
+	transition-duration: var(--transition-speed);
 }
 #new-todo-input:focus {
 	border-color: var(--accent-colour);
@@ -208,6 +210,7 @@ Sidebar styles
 	border: 3px dashed transparent;
 	border-radius: var(--roundness);
 	--highlight-colour: var(--accent-colour);
+	transition-duration: var(--transition-speed);
 }
 .action-dropzone#delete-item-dropzone {
 	/* For the delete one, use a danger colour */
@@ -262,6 +265,7 @@ List styles
 	border: 1px solid var(--borders);
 	background-color: var(--bg);
 	position: relative;
+	transition-duration: var(--transition-speed);
 }
 
 .todo-item input:checked {
