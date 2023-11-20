@@ -9,6 +9,7 @@ export function List() {
 	const { items, setCompleted, editItem, deleteItem } = useItems();
 	const [showCompleted, setShowCompleted] = useState(false);
 	const [updated, setUpdated] = useState(new Date());
+	const [beingDraggedID, setBeingDraggedID] = useState<number | null>(null);
 
 	const sortedAndFilteredItems = useMemo(
 		() =>
@@ -111,6 +112,9 @@ export function List() {
 								<label
 									draggable="true"
 									onDragStart={(event) => {
+										// For nice UX
+										setBeingDraggedID(item.id);
+
 										// Say it can be moved
 										event.dataTransfer.effectAllowed = "move";
 
@@ -130,6 +134,10 @@ export function List() {
 											item.id + ""
 										);
 									}}
+									onDragEnd={() => {
+										setBeingDraggedID(null);
+									}}
+									data-being-dragged={beingDraggedID === item.id ? "" : null}
 									className="todo-item"
 									htmlFor={`item-checkbox-${item.id}`}
 								>

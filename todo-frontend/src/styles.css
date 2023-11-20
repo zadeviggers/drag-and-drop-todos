@@ -242,10 +242,15 @@ List styles
 	/* Ideally the user should be able to select todo items,
 	but it causes issues when dragging & dropping them */
 	user-select: none;
+	cursor: grab;
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
 	padding: var(--spacing-1);
+}
+
+.todo-item[data-being-dragged] {
+	cursor: grabbing;
 }
 
 .todo-item input {
