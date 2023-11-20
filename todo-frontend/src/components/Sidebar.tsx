@@ -20,9 +20,10 @@ export function Sidebar() {
 		<div id="sidebar">
 			<h1 id="title">{currentList?.name ?? "Todos"}</h1>
 			{currentList !== null && slug !== null && (
-				<menu id="sidebar-list-actions">
-					<li className="sidebar-action">
+				<menu id="sidebar-actions">
+					<li>
 						<button
+							className="sidebar-action"
 							id="rename-list-button"
 							onClick={() => {
 								const newName = prompt("Rename list", currentList.name);
@@ -33,8 +34,9 @@ export function Sidebar() {
 							Rename
 						</button>
 					</li>
-					<li className="sidebar-action">
+					<li>
 						<button
+							className="sidebar-action"
 							id="delete-list-button"
 							onClick={() => {
 								const shouldDelete = confirm(

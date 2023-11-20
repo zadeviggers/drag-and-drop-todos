@@ -20,11 +20,13 @@
 	--text: black;
 	--accent-colour: royalblue;
 	--accent-light: skyblue;
-	--accent-danger: coral;
-	--accent-secondary: lightcoral;
+	--accent-danger: crimson;
+	--accent-danger-light: lightcoral;
+	--accent-secondary: coral;
 	--borders: black;
 	--roundness: 7px;
 	--border-width: 2px;
+	--transition-speed: 80ms;
 }
 
 html,
@@ -69,6 +71,35 @@ Sidebar styles
 	max-width: calc(var(--sidebar-width) - var(--spacing-1) - 10px);
 	text-overflow: ellipsis;
 	font-size: 2rem;
+}
+
+#sidebar-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--spacing-1);
+	padding: var(--spacing-1);
+}
+.sidebar-action {
+	border: var(--border-width) solid transparent;
+	padding: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
+	border-radius: var(--roundness);
+	--light-bg: var(--accent-light);
+	--strong-bg: var(--accent-colour);
+	background-color: var(--light-bg);
+	transition-duration: var(--transition-speed);
+}
+.sidebar-action:hover,
+.sidebar-action:focus-visible {
+	background-color: var(--strong-bg);
+}
+.sidebar-action:active {
+	border-color: var(--borders);
+}
+.sidebar-action#delete-list-button {
+	--light-bg: var(--accent-danger-light);
+	--strong-bg: var(--accent-danger);
 }
 
 #sidebar-lists {
