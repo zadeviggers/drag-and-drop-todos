@@ -134,7 +134,7 @@ Sidebar styles
 
 [data-selected] .sidebar-link {
 	border-color: var(--borders);
-	border-style: double;
+	border-style: solid;
 }
 
 [data-drag-over] .sidebar-link {
