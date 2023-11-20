@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { TodoItem, TodoList } from "../../../types.ts";
+import { useSlug } from "./slugState.tsx";
 
 const allListsContext = createContext<{
 	lists: null | Record<string, TodoList>;
@@ -10,13 +11,18 @@ const allListsContext = createContext<{
 }>({ lists: null, setLists: () => {} });
 
 /**
- * Get all the todo items for a given list
- * TODO: Get rid of this, provide methods inside useLists()
+ * Hook for dealing with items
  */
-export function useItems(slug: string | null) {
+export function useItems() {
+	const slug = useSlug();
 	const { lists, setLists } = useContext(allListsContext);
 
 	const list: TodoList | null = slug ? lists?.[slug] ?? null : null;
+
+	function getItem(itemID: number): TodoItem | null {
+		const item = list?.items?.find((item) => item.id === itemID) ?? null;
+		return item;
+	}
 
 	async function addItem(text: string) {
 		if (list === null) {
@@ -97,90 +103,6 @@ export function useItems(slug: string | null) {
 		}
 	}
 
-	const items = list?.items ?? [];
-
-	return { items, addItem, setCompleted };
-}
-
-/**
- * Get all the lists
- */
-export function useLists() {
-	const { lists, setLists } = useContext(allListsContext);
-
-	function getList(slug: string | null) {
-		// Make life easy for consumers
-		if (slug === null) return null;
-
-		return lists?.[slug] ?? null;
-	}
-
-	function getItem(listSlug: string, itemID: number): TodoItem | null {
-		const item =
-			getList(listSlug)?.items?.find((item) => item.id === itemID) ?? null;
-		return item;
-	}
-
-	async function moveItem(
-		itemID: number,
-		fromListSlug: string,
-		toListSlug: string
-	) {
-		const fromList = lists?.[fromListSlug];
-		const toList = lists?.[toListSlug];
-		if (!fromList || !toList) return;
-		const item = getItem(fromListSlug, itemID);
-		if (!item) return;
-
-		try {
-			const data = {
-				list: toListSlug,
-			};
-
-			const res = await fetch(`/api/items/${itemID}`, {
-				method: "PATCH",
-				body: JSON.stringify(data),
-			});
-
-			if (res.ok) {
-				setLists((prevLists) => {
-					return {
-						...prevLists,
-						[fromList.slug]: {
-							...fromList,
-							items: [...fromList.items.filter((item) => item.id !== itemID)],
-						},
-						[toList.slug]: {
-							...toList,
-							items: [...toList.items, { ...item, list: toListSlug }],
-						},
-					};
-				});
-			}
-		} catch (err) {
-			console.error("Failed to change item list: ", err);
-			alert(`Failed to change item list: ${err}`);
-		}
-	}
-
-	async function addList(name: string) {
-		try {
-			const res = await fetch("/api/lists", { method: "POST", body: name });
-			if (res.ok) {
-				const slug = await res.text();
-
-				// Add new list to dict
-				setLists((prevLists) => ({
-					...prevLists,
-					[slug]: { name, slug, items: [] },
-				}));
-			}
-		} catch (err) {
-			console.error("Failed to create new list: ", err);
-			alert(`Failed to add list: ${err}`);
-		}
-	}
-
 	async function editItem(item: TodoItem, text: string) {
 		try {
 			const newItemData: TodoItem = { ...item, text };
@@ -215,12 +137,16 @@ export function useLists() {
 		}
 	}
 
-	async function deleteItem(itemID: number, listSlug: string) {
+	async function deleteItem(itemID: number) {
+		if (list === null) {
+			console.warn("Ignoring item delete because list is null");
+			return;
+		}
 		try {
 			const res = await fetch(`/api/items/${itemID}`, { method: "DELETE" });
 			if (res.ok) {
 				setLists((prevLists) => {
-					const prevList = prevLists?.[listSlug];
+					const prevList = prevLists?.[list?.slug];
 					if (!prevList) return null;
 
 					return {
@@ -238,14 +164,97 @@ export function useLists() {
 		}
 	}
 
+	async function moveItem(itemID: number, toListSlug: string) {
+		if (list === null) {
+			console.warn("Ignoring item move because list (fromList) is null");
+			return;
+		}
+
+		const fromList = lists?.[list?.slug];
+		const toList = lists?.[toListSlug];
+		if (!fromList || !toList) return;
+		const item = getItem(itemID);
+		if (!item) return;
+
+		try {
+			const data = {
+				list: toListSlug,
+			};
+
+			const res = await fetch(`/api/items/${itemID}`, {
+				method: "PATCH",
+				body: JSON.stringify(data),
+			});
+
+			if (res.ok) {
+				setLists((prevLists) => {
+					return {
+						...prevLists,
+						[fromList.slug]: {
+							...fromList,
+							items: [...fromList.items.filter((item) => item.id !== itemID)],
+						},
+						[toList.slug]: {
+							...toList,
+							items: [...toList.items, { ...item, list: toListSlug }],
+						},
+					};
+				});
+			}
+		} catch (err) {
+			console.error("Failed to change item list: ", err);
+			alert(`Failed to change item list: ${err}`);
+		}
+	}
+
+	const items = list?.items ?? [];
+
+	return {
+		items,
+		addItem,
+		setCompleted,
+		editItem,
+		deleteItem,
+		moveItem,
+		getItem,
+	};
+}
+
+/**
+ * Hook for dealing with lists
+ */
+export function useLists() {
+	const { lists, setLists } = useContext(allListsContext);
+
+	function getList(slug: string | null) {
+		// Make life easy for consumers
+		if (slug === null) return null;
+
+		return lists?.[slug] ?? null;
+	}
+
+	async function addList(name: string) {
+		try {
+			const res = await fetch("/api/lists", { method: "POST", body: name });
+			if (res.ok) {
+				const slug = await res.text();
+
+				// Add new list to dict
+				setLists((prevLists) => ({
+					...prevLists,
+					[slug]: { name, slug, items: [] },
+				}));
+			}
+		} catch (err) {
+			console.error("Failed to create new list: ", err);
+			alert(`Failed to add list: ${err}`);
+		}
+	}
+
 	return {
 		lists: lists === null ? [] : Object.values(lists),
 		addList,
 		getList,
-		moveItem,
-		getItem,
-		editItem,
-		deleteItem,
 	};
 }
 

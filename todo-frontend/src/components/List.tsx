@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { useItems, useLists } from "../state/listsState";
+import { useItems } from "../state/listsState";
 import { useSlug } from "../state/slugState";
 import { NewTodoInput } from "./NewTodoInput";
 import { DropZone } from "./ItemActionDropZones";
 
 export function List() {
 	const slug = useSlug();
+	const { items, setCompleted, editItem, deleteItem } = useItems();
 	const [showCompleted, setShowCompleted] = useState(false);
-	const { items, setCompleted } = useItems(slug);
-	const { editItem, deleteItem } = useLists();
 	const [updated, setUpdated] = useState(new Date());
 
 	const sortedAndFilteredItems = useMemo(
@@ -100,7 +99,7 @@ export function List() {
 									const shouldDelete = confirm(
 										`Are you sure you want to delete '${item.text}'?`
 									);
-									if (shouldDelete) deleteItem(item.id, item.list);
+									if (shouldDelete) deleteItem(item.id);
 								}}
 								title="Drop an item here to delete"
 							/>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLists } from "../state/listsState";
+import { useItems, useLists } from "../state/listsState";
 import {
 	useNavigateToSlug,
 	useSlug,
@@ -9,7 +9,8 @@ import {
 export function Sidebar() {
 	const slug = useSlug();
 	const navigateToSlug = useNavigateToSlug();
-	const { lists, getList, addList, moveItem } = useLists();
+	const { moveItem } = useItems();
+	const { lists, getList, addList } = useLists();
 	const currentList = getList(slug);
 	const [currentDragOverSlug, setCurrentDragOverSlug] = useState<string | null>(
 		null
@@ -51,13 +52,10 @@ export function Sidebar() {
 						}}
 						onDrop={(event) => {
 							setCurrentDragOverSlug(null);
-							const fromListSlug = event.dataTransfer.getData(
-								"application/x-todo-list-list-slug"
-							);
 							const itemID = Number(
 								event.dataTransfer.getData("application/x-todo-list-item-id")
 							);
-							moveItem(itemID, fromListSlug, list.slug);
+							moveItem(itemID, list.slug);
 						}}
 					>
 						<a

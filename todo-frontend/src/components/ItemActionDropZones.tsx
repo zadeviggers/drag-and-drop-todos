@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TodoItem } from "../../../types";
-import { useLists } from "../state/listsState";
+import { useItems } from "../state/listsState";
 
 /**
  * Little reusable dropzone component
@@ -16,8 +16,8 @@ export function DropZone({
 	onDrop: (item: TodoItem) => void;
 	[x: string]: unknown;
 }) {
+	const { getItem } = useItems();
 	const [hovered, setHovered] = useState(false);
-	const { getItem } = useLists();
 
 	return (
 		<li
@@ -50,7 +50,7 @@ export function DropZone({
 					event.dataTransfer.getData("application/x-todo-list-item-id")
 				);
 				if (!listSlug || !itemID || isNaN(itemID)) return;
-				const item = getItem(listSlug, itemID);
+				const item = getItem(itemID);
 				if (!item) return;
 
 				onDrop(item);

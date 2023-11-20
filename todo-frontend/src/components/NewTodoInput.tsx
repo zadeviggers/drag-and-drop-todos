@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useItems } from "../state/listsState";
-import { useSlug } from "../state/slugState";
 
 export function NewTodoInput() {
-	const slug = useSlug();
+	const { addItem } = useItems();
 	const [newTodoText, setNewTodoText] = useState("");
-	const { addItem } = useItems(slug);
 
 	return (
 		<form
