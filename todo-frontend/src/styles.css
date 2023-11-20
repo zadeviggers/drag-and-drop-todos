@@ -20,9 +20,7 @@
 	--text: black;
 	--accent-colour: royalblue;
 	--accent-contrast: white;
-	--accent-light: skyblue;
 	--accent-danger: crimson;
-	--accent-secondary: coral;
 	--borders: black;
 	--roundness: 7px;
 	--border-width: 2px;
@@ -95,7 +93,7 @@ Sidebar styles
 }
 .sidebar-action:active {
 	background-color: var(--highlight);
-	color: var(--borders-contrast);
+	color: var(--accent-contrast);
 }
 .sidebar-action#delete-list-button {
 	--highlight: var(--accent-danger);
@@ -119,13 +117,14 @@ Sidebar styles
 	width: 100%;
 }
 .sidebar-link {
+	user-select: none;
 	display: block;
 	width: 100%;
 	height: 100%;
 	padding: var(--spacing-1);
 	padding-left: calc(var(--spacing-1) - var(--current-page-indicator-width));
 	text-decoration: none;
-	color: var(--borders);
+	color: var(--text);
 	/* Keep everything with current page indicator aligned */
 	border-left: var(--current-page-indicator-width) solid transparent;
 	/* Get rid of initial colour from buttons */
@@ -133,16 +132,14 @@ Sidebar styles
 	transition-duration: var(--transition-speed);
 }
 
-.sidebar-link:hover {
-	background-color: var(--accent-light);
-}
-
 [data-selected] .sidebar-link {
-	border-left-color: var(--accent-colour);
+	border-color: var(--borders);
+	border-style: double;
 }
 
 [data-drag-over] .sidebar-link {
-	border-left-color: var(--accent-secondary);
+	border-color: var(--borders);
+	border-style: dotted;
 }
 
 /* List section */
