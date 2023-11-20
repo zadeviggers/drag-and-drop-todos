@@ -19,9 +19,9 @@
 	--bg: whitesmoke;
 	--text: black;
 	--accent-colour: royalblue;
+	--accent-contrast: white;
 	--accent-light: skyblue;
 	--accent-danger: crimson;
-	--accent-danger-light: lightcoral;
 	--accent-secondary: coral;
 	--borders: black;
 	--roundness: 7px;
@@ -80,26 +80,25 @@ Sidebar styles
 	padding: var(--spacing-1);
 }
 .sidebar-action {
-	border: var(--border-width) solid transparent;
+	border: var(--border-width) solid var(--borders);
 	padding: 10px;
 	padding-left: 15px;
 	padding-right: 15px;
-	border-radius: var(--roundness);
-	--light-bg: var(--accent-light);
-	--strong-bg: var(--accent-colour);
-	background-color: var(--light-bg);
+	background-color: var(--bg);
 	transition-duration: var(--transition-speed);
+	border-radius: var(--roundness);
+	--highlight: var(--accent-colour);
 }
 .sidebar-action:hover,
 .sidebar-action:focus-visible {
-	background-color: var(--strong-bg);
+	border-color: var(--highlight);
 }
 .sidebar-action:active {
-	border-color: var(--borders);
+	background-color: var(--highlight);
+	color: var(--borders-contrast);
 }
 .sidebar-action#delete-list-button {
-	--light-bg: var(--accent-danger-light);
-	--strong-bg: var(--accent-danger);
+	--highlight: var(--accent-danger);
 }
 
 #sidebar-lists {
