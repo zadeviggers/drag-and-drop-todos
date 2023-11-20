@@ -20,6 +20,7 @@
 	--text: black;
 	--accent-colour: royalblue;
 	--accent-light: skyblue;
+	--accent-danger: coral;
 	--accent-secondary: lightcoral;
 	--borders: black;
 	--roundness: 7px;
@@ -175,9 +176,14 @@ Sidebar styles
 	display: block;
 	border: 3px dashed transparent;
 	border-radius: var(--roundness);
+	--highlight-colour: var(--accent-colour);
+}
+.action-dropzone#delete-item-dropzone {
+	/* For the delete one, use a danger colour */
+	--highlight-colour: var(--accent-danger);
 }
 .action-dropzone[data-drag-over] {
-	border-color: var(--accent-colour);
+	border-color: var(--highlight-colour);
 }
 
 /* 
