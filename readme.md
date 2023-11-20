@@ -1,4 +1,8 @@
-# Todo list
+# Drag'n'drop TODO list
+
+A simple TODO list with Drag-and-drop to move items between lists.
+
+The front-end is a React SPA, and the back-end is a Deno server. Data is stored in a SQLite database.
 
 ## To run
 
