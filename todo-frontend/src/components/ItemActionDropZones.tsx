@@ -2,51 +2,26 @@ import { useState } from "react";
 import { TodoItem } from "../../../types";
 import { useLists } from "../state/listsState";
 
-export function ItemActionDropZones() {
-	const { editItem, deleteItem } = useLists();
-
-	return (
-		<menu className="item-action-dropzones">
-			<DropZone
-				label="Edit"
-				id="edit-item-text"
-				onDrop={(item) => {
-					const newText = prompt("Edit item", item.text);
-					if (!newText) return;
-					editItem(item, newText);
-				}}
-			/>
-			<DropZone
-				label="Delete"
-				id="delete-item"
-				onDrop={(item) => {
-					const shouldDelete = confirm(
-						`Are you sure you want to delete '${item.text}'?`
-					);
-					if (shouldDelete) deleteItem(item.id, item.list);
-				}}
-			/>
-		</menu>
-	);
-}
-
 /**
  * Little reusable dropzone component
  */
-function DropZone({
+export function DropZone({
 	label,
 	id,
 	onDrop,
+	...rest
 }: {
 	label: string;
 	id: string;
 	onDrop: (item: TodoItem) => void;
+	[x: string]: unknown;
 }) {
 	const [hovered, setHovered] = useState(false);
 	const { getItem } = useLists();
 
 	return (
 		<li
+			{...rest}
 			id={`${id}-dropzone`}
 			className="action-dropzone"
 			data-drag-over={hovered ? "" : null}

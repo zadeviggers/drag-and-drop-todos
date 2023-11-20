@@ -1,4 +1,4 @@
-/* Simple reset */
+/* Simple baseline */
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -17,10 +17,12 @@
 	--spacing-1: 25px;
 	--spacing-2: 50px;
 	--bg: whitesmoke;
+	--text: black;
 	--accent-colour: royalblue;
 	--accent-light: skyblue;
 	--accent-secondary: lightcoral;
 	--borders: black;
+	--roundness: 7px;
 }
 
 html,
@@ -29,6 +31,7 @@ body,
 	width: 100%;
 	min-height: 100%;
 	background-color: var(--bg);
+	color: var(--text);
 }
 
 /* 
@@ -109,9 +112,7 @@ Sidebar styles
 	border-left-color: var(--accent-secondary);
 }
 
-/* 
-List styles
-*/
+/* List control styles */
 
 #top-section {
 	position: sticky;
@@ -119,11 +120,16 @@ List styles
 	z-index: 200;
 	background-color: var(--bg);
 	border-bottom: 2px solid var(--borders);
+	padding: var(--spacing-2);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-1);
+	padding-bottom: 0;
 }
 
 #new-todo-input-wrapper {
+	user-select: none;
 	display: block;
-	margin: var(--spacing-2);
 }
 #new-todo-input-wrapper:focus-within {
 	color: var(--accent-colour);
@@ -133,7 +139,7 @@ List styles
 	width: 100%;
 	padding: var(--spacing-1);
 	font-size: x-large;
-	border-radius: 4px;
+	border-radius: var(--roundness);
 	background-color: var(--bg);
 	border: 2px solid var(--borders);
 }
@@ -142,18 +148,38 @@ List styles
 	outline: none;
 }
 
-#item-action-dropzones {
+#item-action-controls {
+	align-items: center;
 	display: flex;
+	flex-wrap: wrap;
 	width: 100%;
 }
 
+#show-completed-toggle-wrapper {
+	user-select: none;
+	margin-right: auto;
+}
+
+#show-completed-toggle {
+	accent-color: var(--accent-colour);
+}
+
 .action-dropzone {
+	/* flex: 1; */
+	padding: var(--spacing-1);
+	user-select: none;
+	text-align: center;
 	display: block;
-	border: 2px dashed transparent;
+	border: 3px dashed transparent;
+	border-radius: var(--roundness);
 }
 .action-dropzone[data-drag-over] {
 	border-color: var(--accent-colour);
 }
+
+/* 
+List styles
+*/
 
 #list-container {
 	margin-left: var(--sidebar-width);
@@ -170,6 +196,9 @@ List styles
 }
 
 .todo-item {
+	/* Ideally the user should be able to select todo items,
+	but it causes issues when dragging & dropping them */
+	user-select: none;
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;

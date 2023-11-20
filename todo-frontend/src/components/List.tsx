@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { useItems } from "../state/listsState";
+import { useItems, useLists } from "../state/listsState";
 import { useSlug } from "../state/slugState";
 import { NewTodoInput } from "./NewTodoInput";
-import { ItemActionDropZones } from "./ItemActionDropZones";
+import { DropZone } from "./ItemActionDropZones";
 
 export function List() {
 	const slug = useSlug();
 	const [showCompleted, setShowCompleted] = useState(false);
 	const { items, setCompleted } = useItems(slug);
+	const { editItem, deleteItem } = useLists();
 	const [updated, setUpdated] = useState(new Date());
 
 	const sortedAndFilteredItems = useMemo(
@@ -69,19 +70,41 @@ export function List() {
 				<>
 					<div id="top-section">
 						<NewTodoInput />
-						<label
-							htmlFor="show-completed-toggle"
-							className="show-completed-toggle-wrapper"
-						>
-							<input
-								type="checkbox"
-								id="show-completed-toggle"
-								checked={showCompleted}
-								onChange={(event) => setShowCompleted(event.target.checked)}
-							/>{" "}
-							Show completed ({completedCount})
-						</label>
-						<ItemActionDropZones />
+						<menu id="item-action-controls">
+							<label
+								htmlFor="show-completed-toggle"
+								id="show-completed-toggle-wrapper"
+							>
+								<input
+									type="checkbox"
+									id="show-completed-toggle"
+									checked={showCompleted}
+									onChange={(event) => setShowCompleted(event.target.checked)}
+								/>{" "}
+								Show completed ({completedCount})
+							</label>
+							<DropZone
+								label="Edit item"
+								id="edit-item-text"
+								onDrop={(item) => {
+									const newText = prompt("Edit item", item.text);
+									if (!newText) return;
+									editItem(item, newText);
+								}}
+								title="Drop an item here to edit"
+							/>
+							<DropZone
+								label="Delete item"
+								id="delete-item"
+								onDrop={(item) => {
+									const shouldDelete = confirm(
+										`Are you sure you want to delete '${item.text}'?`
+									);
+									if (shouldDelete) deleteItem(item.id, item.list);
+								}}
+								title="Drop an item here to delete"
+							/>
+						</menu>
 					</div>
 					<ul id="todo-items">
 						{sortedAndFilteredItems.map((item) => (
