@@ -34,7 +34,7 @@ export function Sidebar() {
 						onDragEnter={(event) => {
 							if (
 								event.dataTransfer.getData(
-									"application/x-todo-list-from-list-slug"
+									"application/x-todo-list-list-slug"
 								) !== list.slug
 							) {
 								setCurrentDragOverSlug(list.slug);
@@ -43,7 +43,7 @@ export function Sidebar() {
 						onDragExit={(event) => {
 							if (
 								event.dataTransfer.getData(
-									"application/x-todo-list-from-list-slug"
+									"application/x-todo-list-list-slug"
 								) !== list.slug
 							) {
 								setCurrentDragOverSlug(null);
@@ -52,7 +52,7 @@ export function Sidebar() {
 						onDrop={(event) => {
 							setCurrentDragOverSlug(null);
 							const fromListSlug = event.dataTransfer.getData(
-								"application/x-todo-list-from-list-slug"
+								"application/x-todo-list-list-slug"
 							);
 							const itemID = Number(
 								event.dataTransfer.getData("application/x-todo-list-item-id")

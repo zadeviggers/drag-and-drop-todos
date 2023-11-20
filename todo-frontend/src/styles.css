@@ -121,6 +121,19 @@ List styles
 	border-bottom: 2px solid var(--borders);
 }
 
+#item-action-dropzones {
+	display: flex;
+	width: 100%;
+}
+
+.action-dropzone {
+	display: block;
+	border: 2px dashed transparent;
+}
+.action-dropzone[data-drag-over] {
+	border-color: var(--accent-colour);
+}
+
 #list-container {
 	margin-left: var(--sidebar-width);
 }
@@ -128,7 +141,6 @@ List styles
 #todo-items {
 	display: flex;
 	flex-direction: column;
-	/* width: 100%; */
 }
 
 /* Avoid interfering with the top section bottom border */

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useItems } from "../state/listsState";
 import { useSlug } from "../state/slugState";
 import { NewTodoInput } from "./NewTodoInput";
+import { ItemActionDropZones } from "./ItemActionDropZones";
 
 export function List() {
 	const slug = useSlug();
@@ -80,6 +81,7 @@ export function List() {
 							/>{" "}
 							Show completed ({completedCount})
 						</label>
+						<ItemActionDropZones />
 					</div>
 					<ul id="todo-items">
 						{sortedAndFilteredItems.map((item) => (
@@ -98,7 +100,7 @@ export function List() {
 
 										// Used by app
 										event.dataTransfer.setData(
-											"application/x-todo-list-from-list-slug",
+											"application/x-todo-list-list-slug",
 											item.list
 										);
 										event.dataTransfer.setData(

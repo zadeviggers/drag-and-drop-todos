@@ -11,6 +11,7 @@ const allListsContext = createContext<{
 
 /**
  * Get all the todo items for a given list
+ * TODO: Get rid of this, provide methods inside useLists()
  */
 export function useItems(slug: string | null) {
 	const { lists, setLists } = useContext(allListsContext);
@@ -107,6 +108,19 @@ export function useItems(slug: string | null) {
 export function useLists() {
 	const { lists, setLists } = useContext(allListsContext);
 
+	function getList(slug: string | null) {
+		// Make life easy for consumers
+		if (slug === null) return null;
+
+		return lists?.[slug] ?? null;
+	}
+
+	function getItem(listSlug: string, itemID: number): TodoItem | null {
+		const item =
+			getList(listSlug)?.items?.find((item) => item.id === itemID) ?? null;
+		return item;
+	}
+
 	async function moveItem(
 		itemID: number,
 		fromListSlug: string,
@@ -115,7 +129,7 @@ export function useLists() {
 		const fromList = lists?.[fromListSlug];
 		const toList = lists?.[toListSlug];
 		if (!fromList || !toList) return;
-		const item = fromList.items.find((item) => item.id === itemID);
+		const item = getItem(fromListSlug, itemID);
 		if (!item) return;
 
 		try {
@@ -167,11 +181,61 @@ export function useLists() {
 		}
 	}
 
-	function getList(slug: string | null) {
-		// Make life easy for consumers
-		if (slug === null) return null;
+	async function editItem(item: TodoItem, text: string) {
+		try {
+			const newItemData: TodoItem = { ...item, text };
 
-		return lists?.[slug] ?? null;
+			const res = await fetch(`/api/items/${item.id}`, {
+				method: "PATCH",
+				body: JSON.stringify({ text }),
+			});
+
+			if (res.ok) {
+				setLists((prevLists) => {
+					const prevList = prevLists?.[newItemData.list];
+					if (!prevList) return null;
+
+					return {
+						...prevLists,
+						[prevList.slug]: {
+							...prevList,
+							items: [
+								...prevList.items.filter((item) => item.id !== newItemData.id),
+								newItemData,
+							],
+						},
+					};
+				});
+			} else {
+				throw `${res.status} - ${await res.text()}`;
+			}
+		} catch (err) {
+			console.error("Failed to complete/uncomplete item: ", err);
+			alert(`Failed to complete/uncomplete item: ${err}`);
+		}
+	}
+
+	async function deleteItem(itemID: number, listSlug: string) {
+		try {
+			const res = await fetch(`/api/items/${itemID}`, { method: "DELETE" });
+			if (res.ok) {
+				setLists((prevLists) => {
+					const prevList = prevLists?.[listSlug];
+					if (!prevList) return null;
+
+					return {
+						...prevLists,
+						[prevList.slug]: {
+							...prevList,
+							items: prevList.items.filter((item) => item.id !== itemID),
+						},
+					};
+				});
+			}
+		} catch (err) {
+			console.error("Failed to delete item: ", err);
+			alert(`Failed to delete item: ${err}`);
+		}
 	}
 
 	return {
@@ -179,6 +243,9 @@ export function useLists() {
 		addList,
 		getList,
 		moveItem,
+		getItem,
+		editItem,
+		deleteItem,
 	};
 }
 

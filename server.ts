@@ -148,6 +148,22 @@ router.patch("/api/items/:id", async (req) => {
 	return new Response("Completed ⏀");
 });
 
+// Edit an item
+router.delete("/api/items/:id", async (req) => {
+	const id = Number(req.params.id);
+
+	// Update the todo
+	try {
+		db.query(`DELETE FROM items WHERE id=:id;`, { id });
+	} catch (err) {
+		// Don't stringify the error, so that we get a full stacktrace
+		console.warn("Error deleting item:", err);
+		return error(500, "Error deleting item. Please try again.");
+	}
+
+	return new Response(`Deleted item ${id}`);
+});
+
 // Create a list
 router.post("/api/lists", async (req) => {
 	// We only need a name, so I'm just using the body
