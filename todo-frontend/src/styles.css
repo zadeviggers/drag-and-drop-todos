@@ -26,8 +26,8 @@
 html,
 body,
 #root {
-	width: 100vw;
-	min-height: 100vh;
+	width: 100%;
+	min-height: 100%;
 	background-color: var(--bg);
 }
 
@@ -113,6 +113,14 @@ Sidebar styles
 List styles
 */
 
+#top-section {
+	position: sticky;
+	top: 0;
+	z-index: 200;
+	background-color: var(--bg);
+	border-bottom: 2px solid var(--borders);
+}
+
 #list-container {
 	margin-left: var(--sidebar-width);
 }
@@ -123,7 +131,8 @@ List styles
 	/* width: 100%; */
 }
 
-.todo-item-container {
+/* Avoid interfering with the top section bottom border */
+.todo-item-container:not(:first-child) {
 	border-top: 2px solid black;
 }
 
@@ -178,7 +187,7 @@ List styles
 .item-text {
 	display: block;
 	height: auto;
-	max-width: calc(100vw - 250px - var(--sidebar-width));
+	max-width: calc(100% - 250px - var(--sidebar-width));
 	text-wrap: wrap;
 }
 
