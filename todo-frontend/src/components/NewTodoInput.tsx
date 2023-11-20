@@ -18,7 +18,7 @@ export function NewTodoInput() {
 				addItem(text);
 			}}
 		>
-			<label htmlFor="new-todo-input" className="new-todo-input-wrapper">
+			<label htmlFor="new-todo-input" id="new-todo-input-wrapper">
 				Add task
 				<input
 					autoFocus

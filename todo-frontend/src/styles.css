@@ -121,6 +121,27 @@ List styles
 	border-bottom: 2px solid var(--borders);
 }
 
+#new-todo-input-wrapper {
+	display: block;
+	margin: var(--spacing-2);
+}
+#new-todo-input-wrapper:focus-within {
+	color: var(--accent-colour);
+}
+#new-todo-input {
+	display: block;
+	width: 100%;
+	padding: var(--spacing-1);
+	font-size: x-large;
+	border-radius: 4px;
+	background-color: var(--bg);
+	border: 2px solid var(--borders);
+}
+#new-todo-input:focus {
+	border-color: var(--accent-colour);
+	outline: none;
+}
+
 #item-action-dropzones {
 	display: flex;
 	width: 100%;
