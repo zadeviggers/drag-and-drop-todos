@@ -83,9 +83,8 @@ export function List() {
 					</div>
 					<ul id="todo-items">
 						{sortedAndFilteredItems.map((item) => (
-							<li className="todo-item-container">
+							<li className="todo-item-container" key={item.id}>
 								<label
-									key={item.id}
 									draggable="true"
 									onDragStart={(event) => {
 										// Say it can be moved
